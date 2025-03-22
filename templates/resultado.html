@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{nombre_archivo}}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/formatos_resultado.css') }}">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='cuotavista-logo-ojo-transparent.png') }}">
+
+</head>
+<body>
+    <div class="contenedor">
+        <img src="{{ url_for('static', filename='cuotavista-high-resolution-logo.png') }}" alt="Logo de Cuotavista" width="300">
+    </div>
+    
+    <div class="contenedor">
+        <div id="chart"></div>
+
+        <div class="info">
+            <h2>Totales</h2>
+            <p class="totales">$ {{ "{:,.2f}".format(total_pesos) }}</p>
+            <p class="totales">U$S {{ "{:,.2f}".format(total_dolares) }}</p>
+            <p>Estás pagando un total de <b>$ {{ "{:,.2f}".format(total_cuotas_pesos) }}</b> en cuotas, lo que representa un <b>{{ porcentaje_cuotas_pesos }}%</b> de tu Estado de Cuenta.</p>
+        </div>
+    </div>
+    <div class="contenedor">
+        <div id="chart_barras"></div>
+
+        <div class="info">
+            <h2>Proyección de cuotas</h2>
+            <p>A partir de este mes, <span id="resaltado-verde">¡te estás liberando de <b>$ {{ "{:,.2f}".format(montos_cuotas_restantes[0]-montos_cuotas_restantes[1]) }}</b>!</span></p>
+            <p>En {{ cuotas_restantes[-1] }} meses liberarás $ <b>{{ "{:,.2f}".format(total_cuotas_pesos) }}</b>, <i>si no gastás más en cuotas</i> </p>
+        </div>
+    </div>
+    <script>
+        // Usar los valores directamente desde Jinja
+        var labels = ["Total corriente", "Total en cuotas"];
+        var values = JSON.parse('{{ [total_corrientes_pesos, total_cuotas_pesos] | tojson | safe }}');
+    
+        // Crear gráfico con los datos
+        var data = [{
+            type: 'pie',
+            labels: labels,
+            values: values
+        }];
+    
+        var layout = {
+            title: 'Distribución de gastos en pesos'
+        };
+    
+        // Renderizar el gráfico
+        Plotly.newPlot('chart', data, layout);
+    </script>
+    <script>
+        // Datos generados dinámicamente desde Flask
+        var meses_disponibles = JSON.parse('{{ cuotas_restantes | tojson | safe }}'); // Lista de cuotas restantes (ej. [0, 2, 9])
+        var importes_disponibles = JSON.parse('{{ montos_cuotas_restantes | tojson | safe }}'); // Lista de importes correspondientes
+
+        // Crear un array con los valores completos de 0 a 11, llenando con 0 donde no haya datos
+        var meses = [...Array(12).keys()]; // Lista fija de 0 a 11
+        var importes = meses.map(mes => {
+            var index = meses_disponibles.indexOf(mes);
+            return index !== -1 ? importes_disponibles[index] : 0; // Si el mes está en la lista, usa su importe; si no, 0
+        });
+
+        var data = [{
+            x: meses,
+            y: importes,
+            type: 'bar',
+            marker: { color: 'royalblue' }
+        }];
+
+        var layout = {
+            title: 'Evolución del Importe en Cuotas',
+            xaxis: {
+                title: 'Meses',
+                tickmode: 'array',
+                tickvals: meses, // Asegurar que los meses 0-11 siempre aparezcan
+                range: [-0.5, 11.5] // Mantiene el eje X fijo en 0 a 11
+            },
+            yaxis: {
+                title: 'Importe $'
+            }
+        };
+
+        // Renderizar el gráfico en el div con id 'chart'
+        Plotly.newPlot('chart_barras', data, layout);
+    </script>
+
+
+
+     <!-- {{ tabla|safe }} Muestra la tabla con los datos del archivo -->
+
+
+    <!-- Ante la baja cantidad de gastos categorizados bien quiza conviene añadir una categoría CUOTA -->
+    <!-- {{ df_resumido | safe}} -->
+
+    <!-- {{ df_cuotas_restantes | safe}} -->
+
+
+    
+</body>
+</html>
