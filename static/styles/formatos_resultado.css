@@ -79,6 +79,8 @@ p {
 }
 
 
+
+
 /* Responsividad: si la pantalla es menor a 900px, los elementos se apilan */
 @media (max-width: 900px) {
     .contenedor {

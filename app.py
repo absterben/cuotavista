@@ -300,9 +300,12 @@ def pagina_resultado():
         # Crear tabla con cuotas restantes
         df_cuotas_restantes_html = df_cuotas_restantes.to_html(index=False, na_rep="")
 
-        # Crear tabla con los datos crudos.
-        data_html = df.to_html(index=False, na_rep="")
+        df.index.name = None
+        df.reset_index(drop=True, inplace=True)
 
+        # Crear tabla con los datos crudos.
+        data_html = df.drop(columns=["categoria","cuotas_pagas","cuotas_totales","cuotas_restantes"]).to_html(na_rep="", classes="table w-full table-auto border border-gray-300 text-sm")
+        
         contexto = {
             "tabla": data_html,
             "total_pesos": total_pesos,
