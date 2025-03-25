@@ -7,7 +7,7 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Favicon corregido -->
+    
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='cuotavista-logo-ojo-transparent.png') }}">
 
   </head>
@@ -23,7 +23,7 @@
 
 
   <body class="bg-gradient-to-b from-gray-100 to-gray-300 text-gray-900">
-    <!-- Cinta superior blanca para logo -->
+    <!-- Cinta superior  -->
     <div class="bg-white w-full py-4 px-6 flex items-center justify-center shadow-md">
       <img src="{{ url_for('static', filename='cuotavista-high-resolution-logo.png') }}" alt="Logo" class="h-20" />
     </div>
@@ -97,19 +97,14 @@
       </div>
   </section>
     <br>
-
-
-
-
-
-
-    <!-- Footer -->
-    <footer class="bg-white text-gray-700 py-6 text-center text-sm shadow-inner">
-      <p>&copy; 2025 Cuotavista. Todos los derechos reservados.</p>
-      <p class="mt-2">
-        <a href="#" class="hover:underline">Política de privacidad</a> | 
-        <a href="#" class="hover:underline">Términos y condiciones</a>
-      </p>
-    </footer>
+  <!-- Footer -->
+  <footer class="bg-white text-gray-700 py-6 text-center text-sm shadow-inner">
+    <p class="text-red-600 font-bold uppercase tracking-wide mb-2">Importante</p>
+    </p>
+    <p class="mt-4 text-gray-500 max-w-2xl mx-auto px-4">
+      <b>Este es un proyecto personal, experimental y completamente gratuito</b>. No se recolectan datos ni se persigue ningún fin comercial. Busco simplemente ofrecer una herramienta útil de análisis para los usuarios de tarjetas de crédito del BROU, y espero continuar con otros bancos.
+    </p>
+    <p>Contacto: <a href="mailto:henrydemello@outlook.es" class="text-blue-600 hover:underline">henrydemello@outlook.es</a></p>
+  </footer>
   </body>
 </html>
