@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ nombre_archivo }}</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='cuotavista-logo-ojo-transparent.png') }}">
+</head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Y42CJ54H0Z"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-Y42CJ54H0Z');
+</script>
+
+
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Cinta superior  -->
+    <div class="bg-white w-full py-4 px-6 flex items-center justify-between shadow-md">
+      <a href="/" class="text-xs text-blue-600 hover:underline font-medium">← Volver</a>
+      <img src="{{ url_for('static', filename='cuotavista-high-resolution-logo.png') }}" alt="Logo" class="h-10 lg:h-16" />
+      <div class="w-16"></div> <!-- Espaciador para balancear layout -->
+    </div>
+
+    <main class="max-w-6xl mx-auto px-4 py-10 space-y-12">
+
+        <!-- Gráfico de torta + totales -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <div id="chart" class="w-full min-h-[300px] sm:min-h-[350px] md:min-h-[400px]"></div>
+
+            <div>
+                <h2 class="text-2xl font-bold mb-4">Totales</h2>
+                <p class="text-lg font-semibold text-blue-700">$ {{ "{:,.2f}".format(total_pesos) }}</p>
+                <p class="text-lg font-semibold text-blue-700">U$S {{ "{:,.2f}".format(total_dolares) }}</p>
+                <p class="mt-2">Estás pagando un total de <b>${{ "{:,.2f}".format(total_cuotas_pesos) }}</b> en cuotas, lo que representa un <b>{{ porcentaje_cuotas_pesos }}%</b> de tu Estado de Cuenta.</p>
+            </div>
+        </section>
+
+        <!-- Gráfico de barras + proyección -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            <!-- Gráfico de barras -->
+            <div class="w-full min-h-[350px] sm:min-h-[400px] md:min-h-[500px] lg:min-h-[600px]">
+                <div id="chart_barras" class="w-full h-full"></div>
+            </div>
+
+            <!-- Texto explicativo -->
+            <div class="flex flex-col justify-center">
+                <h2 class="text-2xl font-bold mb-4">Proyección de cuotas</h2>
+                <p>
+                    A partir de este mes,
+                    <span class="bg-green-100 text-green-800 font-semibold px-2 py-1 rounded">
+                        ¡te estás liberando de $ {{ "{:,.2f}".format(montos_cuotas_restantes[0]-montos_cuotas_restantes[1]) }}!
+                    </span>
+                </p>
+                <p class="mt-4">
+                    En {{ cuotas_restantes[-1] }} meses liberarás 
+                    <b>$ {{ "{:,.2f}".format(total_cuotas_pesos) }}</b>, 
+                    <i>si no gastás más en cuotas</i>.
+                </p>
+                <p class="mt-4">
+                    <i>Este gráfico muestra el importe correspondiente a cuotas que pagarás en los próximos meses. El "mes 0" sería el actual.</i>
+                </p>
+            </div>
+        </section>          
+
+        <!-- Tabla -->
+        <section>
+            <h2 class="text-2xl font-bold mb-6 text-center">Detalle del Estado de Cuenta</h2>
+            <div class="overflow-x-auto bg-white p-6 rounded-lg shadow-md">
+                <style>
+                    table {
+                        border-collapse: collapse;
+                        width: 100%;
+                        font-size: 0.875rem;
+                    }
+                    th, td {
+                        border: 1px solid #d1d5db;
+                        padding: 0.75rem 1rem;
+                        text-align: left;
+                    }
+                    thead {
+                        background-color: #2563eb;
+                        color: white;
+                    }
+                    tr:nth-child(even) {
+                        background-color: #f3f4f6;
+                    }
+                </style>
+                {{ tabla | safe }}
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Scripts -->
+    <script>
+        const pieLabels = ["Total corriente", "Total en cuotas"];
+        const pieValues = JSON.parse('{{ [total_corrientes_pesos, total_cuotas_pesos] | tojson | safe }}');
+
+        const pieData = [{
+            type: 'pie',
+            labels: pieLabels,
+            values: pieValues
+        }];
+
+        const pieLayout = {
+            title: 'Distribución de gastos en pesos',
+            responsive: true
+        };
+
+        Plotly.newPlot('chart', pieData, pieLayout);
+    </script>
+
+    <script>
+        const meses_disponibles = JSON.parse('{{ cuotas_restantes | tojson | safe }}');
+        const importes_disponibles = JSON.parse('{{ montos_cuotas_restantes | tojson | safe }}');
+
+        const meses = [...Array(12).keys()];
+        const importes = meses.map(mes => {
+            const index = meses_disponibles.indexOf(mes);
+            return index !== -1 ? importes_disponibles[index] : 0;
+        });
+
+        const barData = [{
+            x: meses,
+            y: importes,
+            type: 'bar',
+            marker: { color: 'royalblue' }
+        }];
+
+        const barLayout = {
+            title: 'Proyección de Estados de Cuenta futuros',
+            xaxis: {
+                title: 'Meses',
+                tickmode: 'array',
+                tickvals: meses,
+                range: [-0.5, 11.5]
+            },
+            yaxis: {
+                title: 'Importe $'
+            },
+            responsive: true
+        };
+
+        Plotly.newPlot('chart_barras', barData, barLayout);
+    </script>
+
+    <!-- Resize fix -->
+    <script>
+        window.addEventListener('resize', () => {
+            Plotly.Plots.resize(document.getElementById('chart'));
+            Plotly.Plots.resize(document.getElementById('chart_barras'));
+        });
+    </script>
+
+</body>
+</html>

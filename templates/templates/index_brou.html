@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Cuotavista | Analiza tu EC BROU</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='cuotavista-logo-ojo-transparent.png') }}">
+
+  </head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y42CJ54H0Z"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-Y42CJ54H0Z');
+  </script>
+
+
+  <body class="bg-gradient-to-b from-gray-100 to-gray-300 text-gray-900">
+    <!-- Cinta superior  -->
+    <div class="bg-white w-full py-4 px-6 flex items-center justify-between shadow-md">
+      <a href="/" class="text-xs text-blue-600 hover:underline font-medium">← Volver</a>
+      <img src="{{ url_for('static', filename='cuotavista-high-resolution-logo.png') }}" alt="Logo" class="h-10 lg:h-16" />
+      <div class="w-16"></div> <!-- Espaciador para balancear layout -->
+    </div>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex flex-col items-center justify-center text-center px-6">
+      <div class="mt-16">
+        <h1 class="text-4xl lg:text-5xl font-bold mb-6">
+          Tu proyección de cuotas, al instante
+        </h1>
+        <p class="text-gray-700 mb-8 max-w-2xl">
+          Subí tu Estado de Cuenta del BROU y recibí una proyección automática de tus pagos futuros.
+        </p>
+      </div>
+      
+
+      <!-- Formulario de carga -->
+      <form
+        action="/brou/resultado"
+        method="POST"
+        enctype="multipart/form-data"
+        class="bg-white text-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md transition duration-300"
+      >
+        <label for="file" class="block mb-2 font-semibold">Subí tu archivo XLS del EC:</label>
+        <input
+          type="file"
+          id="file"
+          name="file"
+          accept=".xls"
+          required
+          class="mb-4 w-full px-4 py-2 border border-gray-300 rounded"
+        />
+        <button
+          type="submit"
+          class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+        >
+        🔍 Ver mi análisis de cuotas
+        </button>
+      </form>
+
+      <p class="text-sm text-gray-600 mt-6">Tu archivo no se guarda. El análisis es 100% automático y seguro.</p>
+    
+      <!-- Sección explicativa con GIF -->
+      <div class="my-12 px-4 text-center">
+        <h2 class="text-2xl font-bold mb-4 text-gray-800">¿Cómo descargar tu EC en formato .xls?</h2>
+        <p class="mb-6 text-gray-700 max-w-xl mx-auto">
+          Seguí estos simples pasos en eBROU para obtener tu Estado de Cuenta en formato .xls (Son las plantillas típicas que usa el BROU)
+        </p>
+        <div class="flex justify-center">
+          <img src="{{ url_for('static', filename='concepto.gif') }}"
+          alt="Tutorial descarga EC"
+          class="rounded-lg shadow-lg w-3/4 max-w-3xl h-auto">
+        </div>
+      </div>
+      <!-- Invitación a probar sin datos reales -->
+      <div class="mt-12 px-4 text-center">
+        <h3 class="text-xl font-semibold mb-2 text-gray-800">
+          ¿Querés probar el funcionamiento antes de usar tus datos reales?
+        </h3>
+        <p class="text-gray-700 mb-4 max-w-xl mx-auto">
+          Subí un archivo de ejemplo para ver cómo funciona el análisis sin comprometer tu información personal.
+        </p>
+        <a href="/static/ejemplo_estado_cuenta.xls" 
+          class="inline-block bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
+          Descargar ejemplo de EC
+        </a>
+        <br>
+        <p class="text-gray-700 mb-4 max-w-xl mx-auto">
+          El archivo .xls típico que usa BROU se ve así:
+        </p>
+        <div class="flex justify-center">
+          <img src="{{ url_for('static', filename='ejemplo_brou.png') }}" class="rounded-lg shadow-lg w-4/5 h-auto">
+        </div>
+      </div>
+  </section>
+    <br>
+  <!-- Footer -->
+  <footer class="bg-white text-gray-700 py-6 text-center text-sm shadow-inner">
+    <p class="text-red-600 font-bold uppercase tracking-wide mb-2">Importante</p>
+    <p class="mt-4 text-gray-500 max-w-2xl mx-auto px-4">
+      <b>Este es un proyecto personal, experimental y completamente gratuito</b>. No se recolectan datos de los estados de cuenta ni se persigue ningún fin comercial con ellos. Busco simplemente ofrecer una herramienta útil de análisis para usuarios de tarjetas de crédito uruguayas.
+    </p>
+    <p>Contacto: <a href="mailto:cuotavista@gmail.com" class="text-blue-600 hover:underline">cuotavista@gmail.com</a></p>
+  </footer>
+  </body>
+</html>
