@@ -13,7 +13,19 @@
     <div class="bg-white w-full py-4 px-6 flex items-center justify-between shadow-md">
       <div class="w-16"></div> <!-- Espaciador para balancear layout -->
       <img src="{{ url_for('static', filename='cuotavista-high-resolution-logo.png') }}" alt="Logo" class="h-10 lg:h-16" />
-      <a href="/mision_vision" class="text-xs text-blue-600 hover:underline font-medium">Misión y Visión</a>
+      <!-- Menú normal en pantallas grandes -->
+      <a href="/mision_vision" class="text-xs text-blue-600 hover:underline font-medium hidden sm:inline">Misión y Visión</a>
+      <!-- Menú desplegable en pantallas pequeñas -->
+      <div class="relative inline-block text-left sm:hidden">
+        <details>
+          <summary class="cursor-pointer text-xs text-blue-600 font-medium">Menú</summary>
+          <div class="absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+            <div class="py-1 text-left">
+              <a href="/mision_vision" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Misión y Visión</a>
+            </div>
+          </div>
+        </details>
+      </div>
     </div>
 
     <!-- Hero Section -->
