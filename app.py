@@ -16,6 +16,10 @@ def index():
 def index_brou():
     return render_template("index_brou.html")
 
+@app.route("/mision_vision")
+def index_mision_vision():
+    return render_template("mision_vision.html")
+
 @app.route("/itau")
 def index_itau():
     return render_template("index_itau.html")
