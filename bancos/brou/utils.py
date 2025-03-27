@@ -37,7 +37,6 @@ def es_cuota(descripcion):
     return "NO"
 
 
-
 def numero_cuotas(descripcion):
     descripcion = descripcion.strip()
     

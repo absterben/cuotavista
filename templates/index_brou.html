@@ -23,19 +23,24 @@
 
 
   <body class="bg-gradient-to-b from-gray-100 to-gray-300 text-gray-900">
-    <!-- Cinta superior  -->
-    <div class="bg-white w-full py-4 px-6 flex items-center justify-center shadow-md">
-      <img src="{{ url_for('static', filename='cuotavista-high-resolution-logo.png') }}" alt="Logo" class="h-20" />
-    </div>
+    <!-- Logo -->
+    <header class="bg-white shadow-md py-4 px-6 flex justify-between items-center">
+      <a href="/" class="text-blue-600 hover:underline font-medium">← Volver</a>
+      <img src="{{ url_for('static', filename='cuotavista-high-resolution-logo.png') }}" alt="Logo de Cuotavista" class="h-20 mx-auto">
+      <div class="w-16"></div> <!-- Espaciador para balancear layout -->
+    </header>
 
     <!-- Hero Section -->
     <section class="min-h-screen flex flex-col items-center justify-center text-center px-6">
-      <h1 class="text-4xl lg:text-5xl font-bold mb-6">
-        ¿Cuánto estás pagando en cuotas? <br><br> Descubrilo al <b>instante</b>
-      </h1>
-      <p class="text-gray-700 mb-8 max-w-2xl">
-        Subí tu Estado de Cuenta del BROU y recibí una proyección automática de tus pagos futuros.
-      </p>
+      <div class="mt-16">
+        <h1 class="text-4xl lg:text-5xl font-bold mb-6">
+          Tu proyección de cuotas, al instante
+        </h1>
+        <p class="text-gray-700 mb-8 max-w-2xl">
+          Subí tu Estado de Cuenta del BROU y recibí una proyección automática de tus pagos futuros.
+        </p>
+      </div>
+      
 
       <!-- Formulario de carga -->
       <form
@@ -100,11 +105,10 @@
   <!-- Footer -->
   <footer class="bg-white text-gray-700 py-6 text-center text-sm shadow-inner">
     <p class="text-red-600 font-bold uppercase tracking-wide mb-2">Importante</p>
-    </p>
     <p class="mt-4 text-gray-500 max-w-2xl mx-auto px-4">
-      <b>Este es un proyecto personal, experimental y completamente gratuito</b>. No se recolectan datos ni se persigue ningún fin comercial. Busco simplemente ofrecer una herramienta útil de análisis para los usuarios de tarjetas de crédito del BROU, y espero continuar con otros bancos.
+      <b>Este es un proyecto personal, experimental y completamente gratuito</b>. No se recolectan datos de los estados de cuenta ni se persigue ningún fin comercial con ellos. Busco simplemente ofrecer una herramienta útil de análisis para usuarios de tarjetas de crédito uruguayas.
     </p>
-    <p>Contacto: <a href="mailto:henrydemello@outlook.es" class="text-blue-600 hover:underline">henrydemello@outlook.es</a></p>
+    <p>Contacto: <a href="mailto:cuotavista@gmail.com" class="text-blue-600 hover:underline">cuotavista@gmail.com</a></p>
   </footer>
   </body>
 </html>

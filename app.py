@@ -16,6 +16,10 @@ def index():
 def index_brou():
     return render_template("index_brou.html")
 
+@app.route("/itau")
+def index_itau():
+    return render_template("index_itau.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
