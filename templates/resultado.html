@@ -94,6 +94,13 @@
                 </style>
                 {{ tabla | safe }}
             </div>
+
+            <div class="text-center mt-6">
+                <a href="{{ url_for('descargar_excel', nombre_archivo=nombre_excel) }}"
+                   class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow">
+                    Descargar en Excel
+                </a>
+            </div>
         </section>
 
     </main>

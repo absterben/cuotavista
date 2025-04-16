@@ -5,6 +5,8 @@ from .utils import (
 from .parser import depurar_archivo
 
 import pandas as pd
+import uuid
+import os
 
 brou_bp = Blueprint("brou", __name__)
 
@@ -38,7 +40,7 @@ def pagina_resultado():
 
 
         ########################################################## PROCESO DE CATEGORIZACIÓN
-        df["categoria"] = df["Descripción"].apply(categorize_transaction)
+        '''df["categoria"] = df["Descripción"].apply(categorize_transaction)
 
         df_summary = df.groupby("categoria").agg(
         Cantidad_Transacciones=("Descripción", "count"),
@@ -54,7 +56,7 @@ def pagina_resultado():
         df_summary["Porcentaje Importe Pesos (%)"] = (df_summary["Total_Importe_Pesos"] / total_importe_pesos) * 100
         df_summary["Porcentaje Importe Dólares (%)"] = (df_summary["Total_Importe_Dolares"] / total_importe_dolares) * 100
 
-        df_resumido = df_summary.to_html(index=False, na_rep="")
+        df_resumido = df_summary.to_html(index=False, na_rep="")'''
         #######################################################################################
 
         # Calculo de cuotas totales, pagas y restantes.
@@ -114,8 +116,17 @@ def pagina_resultado():
         df.reset_index(drop=True, inplace=True)
 
         # Crear tabla con los datos crudos.
-        data_html = df.drop(columns=["categoria","cuotas_pagas","cuotas_totales","cuotas_restantes"]).to_html(na_rep="", classes="table w-full table-auto border border-gray-300 text-sm")
+        data_html = df.drop(columns=["cuotas_pagas","cuotas_totales","cuotas_restantes"]).to_html(na_rep="", classes="table w-full table-auto border border-gray-300 text-sm")
         
+        # EXPORTAR A EXCEL
+        os.makedirs("archivos_temp", exist_ok=True)
+
+        # Generar nombre único
+        nombre_excel = f"{uuid.uuid4().hex}.xlsx"
+        ruta_excel = os.path.join("archivos_temp", nombre_excel)
+
+        # Guardar Excel
+        df.to_excel(ruta_excel, index=False)
         contexto = {
             "tabla": data_html,
             "total_pesos": total_pesos,
@@ -125,11 +136,12 @@ def pagina_resultado():
             "total_corrientes_pesos": total_pesos - total_cuotas_pesos,
             "total_corrientes_dolares": total_dolares - total_cuotas_dolares,
             "porcentaje_cuotas_pesos": round(total_cuotas_pesos / total_pesos*100,2),
-            "df_resumido": df_resumido,
+            #"df_resumido": df_resumido,
             "df_cuotas_restantes": df_cuotas_restantes_html,
             "cuotas_restantes": df_cuotas_restantes['cuotas_restantes'].tolist(),
             "montos_cuotas_restantes": df_cuotas_restantes['saldo_mes'].tolist(),
-            "nombre_archivo": nombre_archivo
+            "nombre_archivo": nombre_archivo,
+            "nombre_excel": nombre_excel
         }
 
 
