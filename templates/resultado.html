@@ -67,7 +67,42 @@
                     <i>Este gráfico muestra el importe correspondiente a cuotas que pagarás en los próximos meses. El "mes 0" sería el actual.</i>
                 </p>
             </div>
-        </section>          
+        </section>
+        
+        <section>
+            <h2 class="text-2xl font-bold mb-6 text-center">Compras en cuotas de este mes</h2>
+            <div class="overflow-x-auto bg-white p-6 rounded-lg shadow-md">
+                <style>
+                    .tabla-cuotas-mes table {
+                        border-collapse: collapse;
+                        width: 100%;
+                        font-size: 0.875rem;
+                    }
+                    .tabla-cuotas-mes th, .tabla-cuotas-mes td {
+                        border: 1px solid #d1d5db;
+                        padding: 0.75rem 1rem;
+                        text-align: left;
+                    }
+                    .tabla-cuotas-mes thead {
+                        background-color: #10b981;
+                        color: white;
+                    }
+                    .tabla-cuotas-mes tr:nth-child(even) {
+                        background-color: #f3f4f6;
+                    }
+                </style>
+                <div class="tabla-cuotas-mes">
+                    {{ cuotas_mes_actual | safe }}
+                </div>
+                <p class="mt-6 text-sm text-gray-700">
+                    Este mes agregaste <b>{{ cuotas_mes_cantidad }}</b> cuotas que totalizan 
+                    <b>$ {{ "{:,.2f}".format(cuotas_mes_total_pesos) }}</b> y 
+                    <b>U$S {{ "{:,.2f}".format(cuotas_mes_total_dolares) }}</b>.
+                </p>
+            </div>
+        </section>
+         
+        
 
         <!-- Tabla -->
         <section>

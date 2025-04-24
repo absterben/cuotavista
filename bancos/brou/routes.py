@@ -29,10 +29,17 @@ def pagina_resultado():
         if df is None:
             raise ValueError("El archivo no se pudo procesar correctamente.")
 
-        # Discierne cuotas de gastos corrientes
-        df["es_cuota"] = df["Descripción"].astype(str).apply(es_cuota)
+        # Calculo de cuotas totales, pagas y restantes.
+        df[['cuotas_pagas', 'cuotas_totales']] = df['Descripción'].apply(lambda x: pd.Series(numero_cuotas(x)))
+        df['cuotas_restantes'] = df['cuotas_totales'] - df['cuotas_pagas']
 
+        # Definir si es cuota solo si cumple condiciones adicionales
+        df["es_cuota"] = df.apply(
+            lambda row: "SI" if es_cuota(row["Descripción"]) and 0 <= row["cuotas_restantes"] <= 11 else "NO",
+            axis=1
+        )
 
+        
         # Calcular totales en pesos y dolares
         total_pesos, total_dolares = calculo_totales(df)
         # Calcula totales en pesos para cuotas en pesos y dolares
@@ -83,7 +90,7 @@ def pagina_resultado():
         df_cuotas_restantes = df_cuotas_restantes.sort_values(by="cuotas_restantes", ascending=True)
         '''
 
-                # Calculo de cuotas totales, pagas y restantes.
+        # Calculo de cuotas totales, pagas y restantes.
         df[['cuotas_pagas', 'cuotas_totales']] = df['Descripción'].apply(lambda x: pd.Series(numero_cuotas(x)))
         df['cuotas_restantes'] = df['cuotas_totales'] - df['cuotas_pagas']
 
@@ -125,9 +132,24 @@ def pagina_resultado():
         nombre_excel = f"{uuid.uuid4().hex}.xlsx"
         ruta_excel = os.path.join("archivos_temp", nombre_excel)
 
+
+        # Filtrar cuotas pagas del mes actual (número de cuota = 1)
+        cuotas_mes_actual_df = df[
+            (df["es_cuota"] == "SI") & (df["cuotas_pagas"] == 1)
+        ]
+
+        cuotas_mes_actual_html = cuotas_mes_actual_df.fillna("").to_html(
+            classes='min-w-full', index=True, na_rep=""
+        )
+        cuotas_mes_total_pesos = cuotas_mes_actual_df["Importe $"].sum(skipna=True)
+        cuotas_mes_total_dolares = cuotas_mes_actual_df["Importe U$S"].sum(skipna=True)
+        cuotas_mes_cantidad = len(cuotas_mes_actual_df)
+
+
         # Guardar Excel
-        df.to_excel(ruta_excel, index=False)
+        df.to_excel(ruta_excel, index=True)
         contexto = {
+            
             "tabla": data_html,
             "total_pesos": total_pesos,
             "total_dolares": total_dolares,
@@ -141,7 +163,11 @@ def pagina_resultado():
             "cuotas_restantes": df_cuotas_restantes['cuotas_restantes'].tolist(),
             "montos_cuotas_restantes": df_cuotas_restantes['saldo_mes'].tolist(),
             "nombre_archivo": nombre_archivo,
-            "nombre_excel": nombre_excel
+            "nombre_excel": nombre_excel,
+            "cuotas_mes_actual": cuotas_mes_actual_html,
+            "cuotas_mes_total_pesos": round(cuotas_mes_total_pesos, 2),
+            "cuotas_mes_total_dolares": round(cuotas_mes_total_dolares, 2),
+            "cuotas_mes_cantidad": cuotas_mes_cantidad,
         }
 
 
