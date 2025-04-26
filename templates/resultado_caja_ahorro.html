@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cuotavista | Caja de Ahorro BROU</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='cuotavista-logo-ojo-transparent.png') }}">
+</head>
+
+<body class="bg-gray-100 text-gray-900">
+
+  <!-- Encabezado -->
+  <div class="bg-white w-full py-4 px-6 flex items-center justify-between shadow-md">
+    <a href="/" class="text-xs text-blue-600 hover:underline font-medium">← Volver</a>
+    <img src="{{ url_for('static', filename='cuotavista-high-resolution-logo.png') }}" alt="Logo" class="h-10 lg:h-16" />
+    <div class="w-16"></div>
+  </div>
+
+  <!-- Resultados -->
+  <main class="max-w-7xl mx-auto py-10 px-6 bg-white rounded-lg shadow mt-10">
+    <h1 class="text-3xl font-bold mb-10 text-center">Resumen de Caja de Ahorro - BROU</h1>
+
+    <!-- Totales -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center mb-12">
+      <div class="bg-green-100 p-6 rounded">
+        <h2 class="text-lg font-semibold text-green-700">Total Ingresos</h2>
+        <p class="text-2xl font-bold text-green-900">
+          $ {{ "{:,.2f}".format(ingresos).replace(",", "X").replace(".", ",").replace("X", ".") }}
+        </p>
+      </div>
+      <div class="bg-red-100 p-6 rounded">
+        <h2 class="text-lg font-semibold text-red-700">Total Egresos</h2>
+        <p class="text-2xl font-bold text-red-900">
+          $ {{ "{:,.2f}".format(egresos).replace(",", "X").replace(".", ",").replace("X", ".") }}
+        </p>
+      </div>
+      <div class="bg-blue-100 p-6 rounded">
+        <h2 class="text-lg font-semibold text-blue-700">Flujo del periodo</h2>
+        <p class="text-2xl font-bold text-blue-900">
+          $ {{ "{:,.2f}".format(saldo_total).replace(",", "X").replace(".", ",").replace("X", ".") }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Gráfico mensual -->
+    <div class="mb-12">
+      <div id="grafico"></div>
+    </div>
+
+    <!-- Desglose por Mes -->
+    <div class="mb-12">
+      <h2 class="text-2xl font-bold mb-6 text-gray-800 text-center">Desglose por Mes</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+
+        <!-- Tabla Ingresos -->
+        <div class="overflow-x-auto rounded-lg shadow">
+          <h3 class="text-xl font-semibold mb-2 text-green-700 text-center">Ingresos</h3>
+          <table class="min-w-full divide-y divide-gray-200 bg-white text-sm text-center">
+            <thead class="bg-green-100">
+              <tr>
+                {% for col in columnas_tabla %}
+                  <th class="px-4 py-2 font-medium text-green-900">{{ col }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              {% for fila in tabla_ingresos %}
+              <tr>
+                {% for col in columnas_tabla %}
+                <td class="px-4 py-2 whitespace-nowrap text-right cursor-pointer" 
+                    {% if col != 'Descripción' %}
+                      data-descripcion="{{ fila['Descripción'] }}" 
+                      data-mes="{{ col }}"
+                      onclick="mostrarDetalle(this)"
+                    {% endif %}
+                >
+                  {% if col == 'Descripción' %}
+                    <div class="text-left">{{ fila[col] }}</div>
+                  {% else %}
+                    {% if fila[col] == 0 %}
+                      <!-- vacío -->
+                    {% else %}
+                      $ {{ "{:,.2f}".format(fila[col]).replace(",", "X").replace(".", ",").replace("X", ".") }}
+                    {% endif %}
+                  {% endif %}
+                </td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tabla Egresos -->
+        <div class="overflow-x-auto rounded-lg shadow">
+          <h3 class="text-xl font-semibold mb-2 text-red-700 text-center">Egresos</h3>
+          <table class="min-w-full divide-y divide-gray-200 bg-white text-sm text-center">
+            <thead class="bg-red-100">
+              <tr>
+                {% for col in columnas_tabla %}
+                  <th class="px-4 py-2 font-medium text-red-900">{{ col }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              {% for fila in tabla_egresos %}
+              <tr>
+                {% for col in columnas_tabla %}
+                <td class="px-4 py-2 whitespace-nowrap text-right cursor-pointer"
+                    {% if col != 'Descripción' %}
+                      data-descripcion="{{ fila['Descripción'] }}"
+                      data-mes="{{ col }}"
+                      onclick="mostrarDetalle(this)"
+                    {% endif %}
+                >
+                  {% if col == 'Descripción' %}
+                    <div class="text-left">{{ fila[col] }}</div>
+                  {% else %}
+                    {% if fila[col] == 0 %}
+                      <!-- vacío -->
+                    {% else %}
+                      $ {{ "{:,.2f}".format(fila[col]).replace(",", "X").replace(".", ",").replace("X", ".") }}
+                    {% endif %}
+                  {% endif %}
+                </td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- NUEVO: Detalle de movimientos -->
+    <div id="detalleMovimientos" class="mt-12 hidden">
+      <h2 class="text-2xl font-bold mb-6 text-gray-800 text-center">Detalle de Movimientos</h2>
+      <div class="overflow-x-auto rounded-lg shadow">
+        <table class="min-w-full divide-y divide-gray-200 bg-white text-sm text-center">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="px-4 py-2 font-medium text-gray-700">Fecha</th>
+              <th class="px-4 py-2 font-medium text-gray-700">Descripción</th>
+              <th class="px-4 py-2 font-medium text-gray-700">Débito</th>
+              <th class="px-4 py-2 font-medium text-gray-700">Crédito</th>
+              <th class="px-4 py-2 font-medium text-gray-700">Importe</th>
+            </tr>
+          </thead>
+          <tbody id="tablaDetalle" class="divide-y divide-gray-200">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white text-gray-600 py-6 text-center text-sm mt-10 shadow-inner">
+    <p>Este análisis es automático y no se guarda ningún dato personal. Proyecto experimental.</p>
+  </footer>
+
+  <!-- Datos de movimientos para JS -->
+  <script>
+    const movimientos = {{ movimientos | tojson | safe }};
+    const resumen = {{ resumen_mensual | tojson | safe }};
+  
+    const traceIngresos = {
+      x: resumen.map(x => x.Mes),
+      y: resumen.map(x => x.Ingreso),
+      type: 'scatter',
+      name: 'Ingresos',
+      line: { color: 'green' }
+    };
+  
+    const traceEgresos = {
+      x: resumen.map(x => x.Mes),
+      y: resumen.map(x => x.Egreso),
+      type: 'scatter',
+      name: 'Egresos',
+      line: { color: 'red' }
+    };
+  
+    const layout = {
+      title: 'Ingresos y egresos mensuales',
+      xaxis: { title: 'Mes' },
+      yaxis: { title: 'Monto en pesos' }
+    };
+  
+    Plotly.newPlot('grafico', [traceIngresos, traceEgresos], layout);
+  
+    // ✅ NUEVO código mejorado para filtrar por mes
+    function mostrarDetalle(cell) {
+      const descripcion = cell.getAttribute('data-descripcion');
+      const mesCompleto = cell.getAttribute('data-mes'); // Ej: "Jan 2025"
+  
+      const [mesStr, anioStr] = mesCompleto.split(' ');
+  
+      // Crear número de mes (enero=01, febrero=02, etc.)
+      const meses = {
+        Jan: "01", Feb: "02", Mar: "03", Apr: "04", May: "05", Jun: "06",
+        Jul: "07", Aug: "08", Sep: "09", Oct: "10", Nov: "11", Dec: "12"
+      };
+      const numeroMes = meses[mesStr];
+  
+      const tbody = document.getElementById('tablaDetalle');
+      tbody.innerHTML = '';
+  
+      const resultados = movimientos.filter(mov => {
+        return mov.Descripción === descripcion && 
+               mov.Fecha.endsWith(anioStr) &&
+               mov.Fecha.split("/")[1] === numeroMes;
+      });
+  
+      resultados.forEach(mov => {
+        tbody.innerHTML += `
+          <tr>
+            <td class="px-4 py-2">${mov.Fecha}</td>
+            <td class="px-4 py-2 text-left">${mov.Descripción}</td>
+            <td class="px-4 py-2 text-right">${mov.Débito ? "$ " + mov.Débito.toLocaleString('es-ES', {minimumFractionDigits:2}) : ""}</td>
+            <td class="px-4 py-2 text-right">${mov.Crédito ? "$ " + mov.Crédito.toLocaleString('es-ES', {minimumFractionDigits:2}) : ""}</td>
+            <td class="px-4 py-2 text-right">${mov.Importe ? "$ " + mov.Importe.toLocaleString('es-ES', {minimumFractionDigits:2}) : ""}</td>
+          </tr>
+        `;
+      });
+  
+      document.getElementById('detalleMovimientos').classList.remove('hidden');
+      document.getElementById('detalleMovimientos').scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+
+</body>
+</html>

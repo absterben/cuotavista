@@ -1,6 +1,7 @@
 from flask import Flask, render_template, send_file
 from bancos.brou.routes import brou_bp
 from bancos.itau.routes import itau_bp
+from bancos.brou.routes_caja_ahorro import bp_caja_ahorro
 import os
 import tempfile
 import pandas as pd
@@ -11,6 +12,10 @@ app = Flask(__name__)
 # Registrar Blueprints
 app.register_blueprint(brou_bp, url_prefix="/brou")
 app.register_blueprint(itau_bp, url_prefix="/itau")
+
+app.register_blueprint(bp_caja_ahorro)
+
+
 
 @app.route("/")
 def index():
@@ -51,6 +56,9 @@ def index_itau():
     return render_template("index_itau.html")
 
 
+@app.route("/caja_brou", methods=["GET"])
+def formulario_caja_brou():
+    return render_template("caja_ahorro_index.html")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Cuotavista | Caja de Ahorro BROU</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='cuotavista-logo-ojo-transparent.png') }}">
+  </head>
+
+  <body class="bg-gradient-to-b from-gray-100 to-gray-300 text-gray-900">
+    <!-- Header -->
+    <div class="bg-white w-full py-4 px-6 flex items-center justify-between shadow-md">
+      <div class="w-16"></div>
+      <img src="{{ url_for('static', filename='cuotavista-high-resolution-logo.png') }}" alt="Logo" class="h-10 lg:h-16" />
+      <a href="/mision_vision" class="text-xs text-blue-600 hover:underline font-medium hidden sm:inline">Misión y Visión</a>
+      <div class="relative inline-block text-left sm:hidden">
+        <details>
+          <summary class="cursor-pointer text-xs text-blue-600 font-medium">Menú</summary>
+          <div class="absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+            <div class="py-1 text-left">
+              <a href="/mision_vision" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Misión y Visión</a>
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- Formulario de subida -->
+    <section class="min-h-screen flex flex-col items-center justify-center px-6 text-center gap-8">
+      <div class="max-w-xl">
+        <h1 class="text-4xl font-bold mb-4">Análisis de Caja de Ahorro - BROU</h1>
+        <p class="text-gray-700 mb-6">Subí tu estado de cuenta de caja de ahorro en formato PDF o CSV para analizar ingresos, egresos y saldos.</p>
+        
+        <form action="/caja_brou_resultado" method="POST" enctype="multipart/form-data" class="bg-white rounded-lg shadow-lg p-6 space-y-6">
+          <input 
+            type="file" 
+            name="archivos" 
+            multiple 
+            required 
+            class="block w-full text-sm text-gray-700 border border-gray-300 rounded-md p-2"
+          />
+          <button type="submit" class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
+            Analizar archivos
+          </button>
+        </form>        
+
+        <p class="text-sm text-gray-600 mt-6">Los archivos no se guardan ni se comparten. El análisis es automático y privado.</p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white text-gray-700 py-6 text-center text-sm shadow-inner">
+      <p class="text-red-600 font-bold uppercase tracking-wide mb-2">Importante</p>
+      <p class="mt-4 text-gray-500 max-w-2xl mx-auto px-4">
+        Este es un módulo en desarrollo para analizar movimientos en caja de ahorro del BROU. No se almacenan datos personales.
+      </p>
+      <p>Contacto: <a href="mailto:cuotavista@gmail.com" class="text-blue-600 hover:underline">cuotavista@gmail.com</a></p>
+    </footer>
+  </body>
+</html>
