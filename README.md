@@ -4,7 +4,7 @@
 
 - Conectar con SQL y empezar a manejar bases de datos.
 
-- Mejorar la estructura de la pagina.
+- Mejorar la estructura de la pagina. (que no sea solo un monolito)
 
 - Mejorar UX/UI.
 
