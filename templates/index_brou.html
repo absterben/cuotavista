@@ -10,23 +10,22 @@
     
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='cuotavista-logo-ojo-transparent.png') }}">
 
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y42CJ54H0Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-Y42CJ54H0Z');
+    </script>
+
   </head>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y42CJ54H0Z"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-Y42CJ54H0Z');
-  </script>
-
-
   <body class="bg-gradient-to-b from-gray-100 to-gray-300 text-gray-900">
     <!-- Cinta superior  -->
     <div class="bg-white w-full py-4 px-6 flex items-center justify-between shadow-md">
       <a href="/" class="text-xs text-blue-600 hover:underline font-medium">← Volver</a>
-      <img src="{{ url_for('static', filename='cuotavista-high-resolution-logo.png') }}" alt="Logo" class="h-10 lg:h-16" />
+      <a href="/"><img src="{{ url_for('static', filename='cuotavista-high-resolution-logo.png') }}" alt="Logo" class="h-10 lg:h-16" /></a>
       <div class="w-16"></div> <!-- Espaciador para balancear layout -->
     </div>
 
@@ -34,10 +33,10 @@
     <section class="min-h-screen flex flex-col items-center justify-center text-center px-6">
       <div class="mt-16">
         <h1 class="text-4xl lg:text-5xl font-bold mb-6">
-          Tu proyección de cuotas, al instante
+          Entendé tus cuotas con claridad
         </h1>
-        <p class="text-gray-700 mb-8 max-w-2xl">
-          Subí tu Estado de Cuenta del BROU y recibí una proyección automática de tus pagos futuros.
+        <p class="text-gray-700 mb-8 max-w-2xl mx-auto">
+          Subí tu Estado de Cuenta de una tarjeta de crédito BROU en formato .xls
         </p>
       </div>
       
@@ -48,7 +47,7 @@
         method="POST"
         enctype="multipart/form-data"
         class="bg-white text-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md transition duration-300">
-        <label for="file" class="block mb-2 font-semibold">Subí tu archivo XLS del EC:</label>
+        <label for="file" class="block mb-2 font-semibold"></label>
         <input
           type="file"
           id="file"
@@ -67,23 +66,39 @@
 
       <!-- Botón para ir al análisis de Caja de Ahorro -->
       <div class="mt-12 text-center">
-        <h2 class="text-xl font-semibold mb-2 text-gray-800">¿Querés analizar los movimientos de tu Caja de Ahorro del BROU?</h2>
+        <h2 class="text-2xl font-bold mb-2 text-gray-800">
+        También podés analizar tu Caja de Ahorro
+        </h2>
         <p class="text-gray-700 mb-4 max-w-xl mx-auto">
-          También podés subir tu estado de cuenta de caja de ahorro en PDF o CSV y ver un resumen automático de ingresos, egresos y saldos mensuales.
+          Subí el archivo de tu cuenta y obtené un resumen claro con todos tus ingresos, egresos y saldos mes a mes. <i>Ideal para entender a dónde va tu plata.</i>
         </p>
-        <a href="/caja_brou" class="inline-block bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition">
-          💼 Analizar mi Caja de Ahorro
+        <a href="/caja_brou" 
+           class="inline-block bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition font-semibold shadow">
+           📊 Ver mi resumen bancario
         </a>
+        
       </div>
 
       <p class="text-sm text-gray-600 mt-6">Los archivos no se guardan ni se comparten. El análisis es 100% automático.</p>
     
       <!-- Sección explicativa con GIF -->
       <div class="my-12 px-4 text-center">
-        <h2 class="text-2xl font-bold mb-4 text-gray-800">¿Cómo descargar tu EC en formato .xls?</h2>
+        <h2 class="text-2xl font-bold mb-4 text-gray-800">
+          ¿Cómo obtener tu Estado de Cuenta en .xls?
+        </h2>
+        
         <p class="mb-6 text-gray-700 max-w-xl mx-auto">
-          Seguí estos simples pasos en eBROU para obtener tu Estado de Cuenta en formato .xls (Son las plantillas típicas que usa el BROU)
+          Seguí estos pasos en <strong>eBROU</strong> para descargar el archivo compatible con Cuotavista:
         </p>
+        
+        <ul class="text-gray-700 text-left max-w-xl mx-auto list-disc list-inside space-y-2">
+          <li>Ingresá a <strong>eBROU</strong> desde tu navegador.</li>
+          <li>Buscá tu tarjeta de crédito.</li>
+          <li>Seleccioná el mes que querés analizar.</li>
+          <li>Hacé clic en <em>Guardar</em> y elegí el formato <strong>.xls</strong>.</li>
+          <li>Guardá el archivo en tu computadora para subirlo a Cuotavista.</li>
+        </ul>
+        <br>              
         <div class="flex justify-center">
           <img src="{{ url_for('static', filename='concepto.gif') }}"
           alt="Tutorial descarga EC"
@@ -92,32 +107,26 @@
       </div>
       <!-- Invitación a probar sin datos reales -->
       <div class="mt-12 px-4 text-center">
-        <h3 class="text-xl font-semibold mb-2 text-gray-800">
-          ¿Querés probar el funcionamiento antes de usar tus datos reales?
+        <h3 class="text-2xl font-bold mb-2 text-gray-800">
+          ¿Querés probar cómo funciona sin usar tus datos?
         </h3>
         <p class="text-gray-700 mb-4 max-w-xl mx-auto">
-          Subí un archivo de ejemplo para ver cómo funciona el análisis sin comprometer tu información personal.
+          Podés descargar aquí un archivo de ejemplo y ver qué tenemos para ofrecer.
         </p>
         <a href="/static/ejemplo_estado_cuenta.xls" 
-          class="inline-block bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
-          Descargar ejemplo de EC
+           class="inline-block bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition font-medium shadow">
+          Descargar archivo de ejemplo
         </a>
-        <br>
-        <p class="text-gray-700 mb-4 max-w-xl mx-auto">
-          El archivo .xls típico que usa BROU se ve así:
-        </p>
-        <div class="flex justify-center">
-          <img src="{{ url_for('static', filename='ejemplo_brou.png') }}" class="rounded-lg shadow-lg w-4/5 h-auto">
-        </div>
-      </div>
+      </div>      
       <!-- Sección explicativa "¿Cómo funciona?" -->
       <div class="mt-16 px-4 text-center">
         <h2 class="text-2xl font-bold mb-4 text-gray-800">¿Cómo funciona?</h2>
         <p class="mb-4 text-gray-700 max-w-2xl mx-auto">
           Los Estados de Cuenta que proporcionan los bancos suelen seguir un formato rígido. Gracias a eso, se puede automatizar la lectura del archivo y extraer datos clave, con los cuales analizar la información.
         </p>
+        <br>
         <p class="mb-4 text-gray-700 max-w-2xl mx-auto">
-          El sistema procesa tu archivo .xls, identifica todas las compras en cuotas, calcula cuánto vas a pagar cada mes y te muestra una tabla con la proyección de pagos futuros. Todo esto sin guardar ni compartir tu información.
+          El sistema procesa tu archivo .xls, identifica todas las compras en cuotas, calcula cuánto vas a pagar cada mes y te muestra una tabla con la proyección de pagos futuros.
         </p>
       </div>
   </section>

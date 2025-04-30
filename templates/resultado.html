@@ -6,27 +6,29 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='cuotavista-logo-ojo-transparent.png') }}">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y42CJ54H0Z"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-Y42CJ54H0Z');
+    </script>
+
 </head>
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Y42CJ54H0Z"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-Y42CJ54H0Z');
-</script>
 
 
 <body class="bg-gray-100 text-gray-800">
-
     <!-- Cinta superior  -->
     <div class="bg-white w-full py-4 px-6 flex items-center justify-between shadow-md">
-      <a href="/" class="text-xs text-blue-600 hover:underline font-medium">← Volver</a>
-      <img src="{{ url_for('static', filename='cuotavista-high-resolution-logo.png') }}" alt="Logo" class="h-10 lg:h-16" />
-      <div class="w-16"></div> <!-- Espaciador para balancear layout -->
-    </div>
+        <a href="/brou" class="text-xs text-blue-600 hover:underline font-medium">← Volver</a>
+        <a href="/"><img src="{{ url_for('static', filename='cuotavista-high-resolution-logo.png') }}" alt="Logo" class="h-10 lg:h-16" /></a>
+        <div class="w-16"></div> <!-- Espaciador para balancear layout -->
+      </div>
 
     <main class="max-w-6xl mx-auto px-4 py-10 space-y-12">
 
