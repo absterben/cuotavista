@@ -4,7 +4,9 @@
 
 - Conectar con SQL y empezar a manejar bases de datos.
 
-- Mejorar la estructura de la pagina. (que no sea solo un monolito)
+- Mejorar las formas de la pagina:
+    1. Cambiar la estructura de monolito
+    2. Buscar tener una plantilla base.html
 
 - Mejorar UX/UI.
 
