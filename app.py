@@ -1,6 +1,7 @@
 from flask import Flask, render_template, send_file
 from bancos.brou.routes import brou_bp
 from bancos.itau.routes import itau_bp
+from bancos.scotiabank.routes import scotia_bp
 from bancos.brou.routes_caja_ahorro import bp_caja_ahorro
 import os
 import tempfile
@@ -12,6 +13,8 @@ app = Flask(__name__)
 # Registrar Blueprints
 app.register_blueprint(brou_bp, url_prefix="/brou")
 app.register_blueprint(itau_bp, url_prefix="/itau")
+app.register_blueprint(scotia_bp, url_prefix="/scotiabank")
+
 
 app.register_blueprint(bp_caja_ahorro)
 
@@ -59,6 +62,10 @@ def index_itau():
 @app.route("/caja_brou", methods=["GET"])
 def formulario_caja_brou():
     return render_template("caja_ahorro_index.html")
+
+@app.route("/scotiabank")
+def scotiabank():
+    return render_template("index_scotiabank.html")
 
 
 if __name__ == "__main__":
