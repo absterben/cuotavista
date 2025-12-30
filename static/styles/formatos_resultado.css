@@ -1,0 +1,99 @@
+h1 {
+    font-family: 'Arial', sans-serif;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0px;
+    color: #111; /* Negro oscuro */
+}
+
+p {
+    font-family: 'Arial', sans-serif;
+    font-size: 1.1rem;
+    color: #444; /* Gris oscuro */
+    margin-bottom: 15px;
+}
+
+
+.contenedor {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los elementos bajen de línea si no hay espacio */
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+#chart {
+    flex: 1;
+    min-width: 300px; /* Permite que el gráfico tenga espacio mínimo */
+}
+
+.info {
+    flex: 1; /* Permite que la caja se ajuste */
+    min-width: 300px; /* Evita que se vuelva demasiado pequeña */
+    font-family: 'Arial', sans-serif;
+    font-size: 18px;
+    line-height: 1.5;
+    color: #333;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    max-width: 50%;
+}
+
+.info h2 {
+    font-size: 24px; /* Título más grande */
+    font-weight: bold;
+    color: #222; /* Color más oscuro para destacar */
+}
+
+.info p {
+    margin-bottom: 10px; /* Espacio entre párrafos */
+}
+
+.totales {
+    font-size: 22px; /* Tamaño más grande */
+    font-weight: bold; /* Texto en negrita */
+    color: #007bff; /* Azul vibrante para destacar */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* Sombra sutil para dar efecto 3D */
+    padding: 10px 15px; /* Espaciado interno */
+    background-color: #f0f8ff; /* Azul claro de fondo para resaltarlo */
+    border-left: 5px solid #0056b3; /* Borde izquierdo para efecto visual */
+    display: inline-block; /* Evita que ocupe todo el ancho */
+    border-radius: 5px; /* Bordes redondeados */
+    margin-top: 10px; /* Espaciado arriba */
+}
+
+
+#chart_barras {
+    width: 50%; /* Ocupa la mitad del ancho */
+    order: 2;
+}
+
+#resaltado-verde {
+    color: #28a745; /* Verde tipo Bootstrap */
+    font-weight: bold;
+    font-size: 1.2em;
+    background-color: rgba(40, 167, 69, 0.1); /* Fondo verde claro */
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-block; /* Para que respete el padding */
+}
+
+
+
+
+/* Responsividad: si la pantalla es menor a 900px, los elementos se apilan */
+@media (max-width: 900px) {
+    .contenedor {
+        flex-direction: column; /* Pone los elementos en columna */
+        align-items: left;
+    }
+
+    .info,
+    #chart,
+    #chart_barras {
+        max-width: 100%; /* Ocuparán el 100% del ancho */
+        text-align: left;
+        align-items: left;
+    }
+    
+}

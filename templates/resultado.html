@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ nombre_archivo }}</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='cuotavista-logo-ojo-transparent.png') }}">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y42CJ54H0Z"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-Y42CJ54H0Z');
+    </script>
+
+</head>
+
+{% set brand_hex = '#5d673f' %}
+
+<body class="bg-gray-100 text-gray-800">
+    <!-- Cinta superior  -->
+    <div class="bg-white w-full py-4 px-6 flex items-center justify-between shadow-md">
+        <a href="/" class="text-xs font-medium" style="color: {{ brand_hex }};">← Volver</a>
+        <div class="flex items-center gap-3">
+            <a href="/"><img src="{{ url_for('static', filename='cuotavista-high-resolution-logo.png') }}" alt="Logo" class="h-10 lg:h-16" /></a>
+            {% if nombre_banco %}
+            <span class="hidden sm:inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full border border-gray-200" style="color:#6b7280; background:#f4f5f1;">
+                {{ nombre_banco }}
+            </span>
+            {% endif %}
+        </div>
+        <div class="w-16 flex justify-end">
+            {% if nombre_banco %}
+            <span class="sm:hidden inline-flex items-center px-2.5 py-1 text-[11px] font-semibold rounded-full border border-gray-200" style="color:#6b7280; background:#f4f5f1;">
+                {{ nombre_banco }}
+            </span>
+            {% endif %}
+        </div>
+      </div>
+
+    <main class="max-w-6xl mx-auto px-4 py-10 space-y-12">
+
+        <!-- Nombre del banco -->
+        {# Eliminado badge de banco en el body, solo queda en el header #}
+
+        <!-- Gráfico de torta + totales -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <div id="chart" class="w-full min-h-[300px] sm:min-h-[350px] md:min-h-[400px]"></div>
+
+            <div>
+                <h2 class="text-2xl font-bold mb-4" style="color: {{ brand_hex }};">Totales</h2>
+                <p class="text-lg font-semibold" style="color: {{ brand_hex }};">$ {{ "{:,.2f}".format(total_pesos) }}</p>
+                <p class="text-lg font-semibold" style="color: {{ brand_hex }};">U$S {{ "{:,.2f}".format(total_dolares) }}</p>
+                <p class="mt-2">Estás pagando un total de <b>${{ "{:,.2f}".format(total_cuotas_pesos) }}</b> en cuotas, lo que representa un <b>{{ porcentaje_cuotas_pesos }}%</b> de tu Estado de Cuenta.</p>
+            </div>
+        </section>
+
+        <!-- Gráfico de barras + proyección -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            <!-- Gráfico de barras -->
+            <div class="w-full min-h-[350px] sm:min-h-[400px] md:min-h-[500px] lg:min-h-[600px]">
+                <div id="chart_barras" class="w-full h-full"></div>
+            </div>
+
+            <!-- Texto explicativo -->
+            <div class="flex flex-col justify-center">
+                <h2 class="text-2xl font-bold mb-4">Proyección de cuotas</h2>
+                {% set mes_actual = montos_cuotas_restantes[0]|float if montos_cuotas_restantes|length > 0 else 0 %}
+                {% set mes_siguiente = montos_cuotas_restantes[1]|float if montos_cuotas_restantes|length > 1 else 0 %}
+                {% set ahorro_mes = mes_actual - mes_siguiente if mes_actual is not none else 0 %}
+                {% if ahorro_mes > 0.01 %}
+                <p>
+                    A partir del próximo mes,
+                    <span class="bg-green-100 text-green-800 font-semibold px-2 py-1 rounded">
+                        estás pagando $ {{ "{:,.2f}".format(ahorro_mes) }} menos que en este.
+                    </span>
+                </p>
+                {% endif %}
+                <p class="mt-4">
+                    En {{ cuotas_restantes[-1] }} meses liberarás 
+                    <b>$ {{ "{:,.2f}".format(total_cuotas_pesos) }}</b>, 
+                    <i>si no gastás más en cuotas</i>.
+                </p>
+                <p class="mt-4">
+                    <i>Este gráfico muestra el importe correspondiente a cuotas que pagarás en los próximos meses. El "mes 0" sería el actual.</i>
+                </p>
+            </div>
+        </section>
+        
+        <section>
+            <h2 class="text-2xl font-bold mb-6 text-center">Compras en cuotas de este mes</h2>
+            <div class="overflow-x-auto bg-white p-6 rounded-lg shadow-md">
+                <style>
+                    .tabla-cuotas-mes table {
+                        border-collapse: collapse;
+                        width: 100%;
+                        font-size: 0.875rem;
+                    }
+                    .tabla-cuotas-mes th, .tabla-cuotas-mes td {
+                        border: 1px solid #d1d5db;
+                        padding: 0.75rem 1rem;
+                        text-align: left;
+                    }
+                    .tabla-cuotas-mes thead {
+                        background-color: {{ brand_hex }};
+                        color: white;
+                    }
+                    .tabla-cuotas-mes tr:nth-child(even) {
+                        background-color: #f3f4f6;
+                    }
+                </style>
+                <div class="tabla-cuotas-mes">
+                    {{ cuotas_mes_actual | safe }}
+                </div>
+                <p class="mt-6 text-sm text-gray-700">
+                    Este mes agregaste <b>{{ cuotas_mes_cantidad }}</b> cuotas que totalizan 
+                    <b>$ {{ "{:,.2f}".format(cuotas_mes_total_pesos) }}</b> y 
+                    <b>U$S {{ "{:,.2f}".format(cuotas_mes_total_dolares) }}</b>.
+                </p>
+            </div>
+        </section>
+         
+        
+
+        <!-- Tabla -->
+        <section>
+            <h2 class="text-2xl font-bold mb-4 text-center">Detalle del Estado de Cuenta</h2>
+            <div class="text-center mb-4">
+                <a href="{{ url_for('descargar_excel', nombre_archivo=nombre_excel) }}"
+                   class="inline-flex items-center gap-2 px-4 py-2 rounded-md text-white font-semibold"
+                   style="background: {{ brand_hex }};">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3v14" />
+                        <path d="m6 11 6 6 6-6" />
+                        <path d="M5 21h14" />
+                    </svg>
+                    Descargar en Excel
+                </a>
+            </div>
+            <div class="overflow-x-auto bg-white p-6 rounded-lg shadow-md">
+                <style>
+                    table {
+                        border-collapse: collapse;
+                        width: 100%;
+                        font-size: 0.875rem;
+                    }
+                    th, td {
+                        border: 1px solid #d1d5db;
+                        padding: 0.75rem 1rem;
+                        text-align: left;
+                    }
+                    thead {
+                        background-color: {{ brand_hex }};
+                        color: white;
+                    }
+                    tr:nth-child(even) {
+                        background-color: #f3f4f6;
+                    }
+                </style>
+                {{ tabla | safe }}
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Scripts -->
+    <script>
+        const brandColor = '{{ brand_hex }}';
+        const pieLabels = ["Total corriente", "Total en cuotas"];
+        const pieValues = JSON.parse('{{ [total_corrientes_pesos, total_cuotas_pesos] | tojson | safe }}');
+
+        const pieData = [{
+            type: 'pie',
+            labels: pieLabels,
+            values: pieValues,
+            marker: {
+                colors: [brandColor, '#93a36b']
+            }
+        }];
+
+        const pieLayout = {
+            title: 'Distribución de gastos en pesos',
+            responsive: true
+        };
+
+        Plotly.newPlot('chart', pieData, pieLayout);
+    </script>
+
+    <script>
+        const meses_disponibles = JSON.parse('{{ cuotas_restantes | tojson | safe }}');
+        const importes_disponibles = JSON.parse('{{ montos_cuotas_restantes | tojson | safe }}');
+
+        const meses = [...Array(12).keys()];
+        const importes = meses.map(mes => {
+            const index = meses_disponibles.indexOf(mes);
+            return index !== -1 ? importes_disponibles[index] : 0;
+        });
+
+        const barData = [{
+            x: meses,
+            y: importes,
+            type: 'bar',
+            marker: { color: brandColor }
+        }];
+
+        const barLayout = {
+            title: 'Proyección de Estados de Cuenta futuros',
+            xaxis: {
+                title: 'Meses',
+                tickmode: 'array',
+                tickvals: meses,
+                range: [-0.5, 11.5]
+            },
+            yaxis: {
+                title: 'Importe $'
+            },
+            responsive: true
+        };
+
+        Plotly.newPlot('chart_barras', barData, barLayout);
+    </script>
+
+    <!-- Resize fix -->
+    <script>
+        window.addEventListener('resize', () => {
+            Plotly.Plots.resize(document.getElementById('chart'));
+            Plotly.Plots.resize(document.getElementById('chart_barras'));
+        });
+    </script>
+
+</body>
+</html>

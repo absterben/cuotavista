@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuotavista | Analizá tu Estado de Cuenta</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='cuotavista-logo-ojo-transparent.png') }}">
+  
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y42CJ54H0Z"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-Y42CJ54H0Z');
+  </script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: {
+              base: '#F4F1EC',
+              light: '#FAF8F5',
+              dark: '#E8E4DD',
+            },
+            olive: {
+              DEFAULT: '#6B7F5A',
+              dark: '#3F4F3C',
+              soft: '#A8B79A',
+              hover: '#5A6D4A',
+            },
+            text: {
+              primary: '#2E2E2E',
+              secondary: '#6B6B6B',
+              disabled: '#9A9A9A',
+            },
+            state: {
+              success: '#6E8F6A',
+              warning: '#C2A24D',
+              error: '#9B4A3C',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .upload-zone {
+      transition: all 0.2s ease;
+    }
+    .upload-zone:hover {
+      border-color: #6B7F5A;
+    }
+    .upload-zone.dragover {
+      border-color: #6B7F5A;
+      background-color: #f0f3ed;
+    }
+    .upload-zone.processing {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    .error-message {
+      animation: shake 0.4s ease-in-out;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+  </style>
+</head>
+
+<body class="bg-cream-base text-text-primary antialiased">
+
+    <!-- Header inicial (NO sticky) -->
+    <header class="bg-olive-dark/5 border-b border-cream-dark/40">
+      <div class="h-[14vh] min-h-[100px] max-h-[140px] flex items-center justify-center px-6">
+        <a href="/" class="flex items-center">
+          <img src="{{ url_for('static', filename='cuotavista-high-resolution-logo.png') }}" alt="Cuotavista" class="h-12 md:h-16">
+        </a>
+      </div>
+    </header>
+
+    <!-- SVG ondulado sutil -->
+    <div class="w-full overflow-hidden bg-olive-dark/5">
+      <svg class="w-full h-8 md:h-10" viewBox="0 0 1200 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,20 C200,35 400,5 600,20 C800,35 1000,5 1200,20 L1200,40 L0,40 Z" fill="#FAF8F5" opacity="0.8"/>
+      </svg>
+    </div>
+
+  <!-- Acción: Subir archivo (protagonista, above the fold) -->
+  <section id="analizar" class="bg-cream-light py-12 md:py-16 px-6">
+    <div class="max-w-4xl mx-auto">
+      
+      <h2 class="text-2xl md:text-4xl font-bold text-center text-text-primary mb-3">
+        Analizá tu estado de cuenta
+      </h2>
+      <p class="text-text-secondary text-center mb-8">
+        Elegí tu banco y subí el archivo.
+      </p>
+
+      <!-- Formularios -->
+      <div class="grid md:grid-cols-2 gap-6">
+        
+        <!-- BROU -->
+        <form 
+          id="form-brou"
+          action="/brou/resultado" 
+          method="POST" 
+          enctype="multipart/form-data"
+          class="upload-zone bg-cream-light border border-cream-dark rounded-xl p-6 md:p-8 text-center">
+          
+          <div class="mb-5">
+            <h3 class="text-lg font-semibold text-text-primary">BROU</h3>
+            <p class="text-sm text-text-secondary mt-1">Excel (.xls o .xlsx)</p>
+            <a href="{{ url_for('static', filename='ejemplo_estado_cuenta.xls') }}" download class="text-xs text-olive hover:text-olive-dark underline mt-2 inline-block">Ver ejemplo</a>
+          </div>
+          
+          <input 
+            type="file" 
+            name="file" 
+            id="file-brou"
+            accept=".xls,.xlsx" 
+            required
+            class="hidden">
+          
+          <label 
+            for="file-brou" 
+            class="inline-flex items-center gap-2 bg-olive text-white px-6 py-3 rounded-lg font-medium hover:bg-olive-dark transition cursor-pointer">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+            </svg>
+            Subir archivo
+          </label>
+
+          <!-- Área de error -->
+          <div id="error-brou" class="hidden mt-4 p-3 bg-state-error/10 border border-state-error/30 rounded-lg text-sm text-state-error"></div>
+        </form>
+
+        <!-- Itaú -->
+        <form 
+          id="form-itau"
+          action="/itau/resultado" 
+          method="POST" 
+          enctype="multipart/form-data"
+          class="upload-zone bg-cream-light border border-cream-dark rounded-xl p-6 md:p-8 text-center">
+          
+          <div class="mb-5">
+            <h3 class="text-lg font-semibold text-text-primary">Itaú</h3>
+            <p class="text-sm text-text-secondary mt-1">PDF del estado de cuenta</p>
+          </div>
+          
+          <input 
+            type="file" 
+            name="archivo" 
+            id="file-itau"
+            accept=".pdf" 
+            required
+            class="hidden">
+          
+          <label 
+            for="file-itau" 
+            class="inline-flex items-center gap-2 bg-olive text-white px-6 py-3 rounded-lg font-medium hover:bg-olive-dark transition cursor-pointer">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+            </svg>
+            Subir archivo
+          </label>
+
+          <!-- Área de error -->
+          <div id="error-itau" class="hidden mt-4 p-3 bg-state-error/10 border border-state-error/30 rounded-lg text-sm text-state-error"></div>
+        </form>
+
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="mt-10 max-w-2xl mx-auto text-center">
+        <p class="text-sm text-text-secondary leading-relaxed">
+          No guardamos tu información. El código es open-source y puede ser auditado.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Video explicativo (sección secundaria) -->
+  <section class="bg-cream-base py-20 px-6 border-t border-cream-dark/20">
+    <div class="max-w-2xl mx-auto">
+      <h2 class="text-xl md:text-2xl font-semibold text-center text-olive-dark mb-8">¿Cómo funciona?</h2>
+      <div class="w-full aspect-video rounded-xl overflow-hidden">
+        <iframe 
+          class="w-full h-full"
+          src="https://www.youtube.com/embed/wxCg8nTXSa0" 
+          title="Cómo usar Cuotavista"
+          frameborder="0" 
+          allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-cream-dark border-t border-olive-dark/10 py-14 px-6">
+    <div class="max-w-3xl mx-auto space-y-6">
+      <p class="text-sm text-text-secondary text-center">
+        Creado por <a href="https://www.linkedin.com/in/hdemello/" target="_blank" rel="noopener noreferrer" class="text-olive hover:text-olive-dark transition underline">Henry de Mello</a>
+      </p>
+      <div class="flex items-center justify-center gap-8 text-sm text-text-secondary">
+        <a href="mailto:cuotavista@gmail.com" class="hover:text-olive-dark transition">Contacto</a>
+        <a href="https://github.com/absterben/cuotavista" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 hover:text-olive-dark transition">
+          <svg class="w-4 h-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38C13.71 14.53 16 11.54 16 8c0-4.42-3.58-8-8-8z"></path>
+          </svg>
+          <span>Ver código fuente en GitHub</span>
+        </a>
+      </div>
+      <p class="text-xs text-text-disabled text-center leading-relaxed">
+        Herramienta independiente. No afiliada con ninguna institución financiera.
+        <br>
+        El análisis puede no ser exacto, se recomienda corroborar siempre la información.
+      </p>
+    </div>
+  </footer>
+
+  <!-- JavaScript para Drag & Drop -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      
+      // Configuración de cada zona de carga
+      const zones = [
+        {
+          formId: 'form-brou',
+          inputId: 'file-brou',
+          errorId: 'error-brou',
+          allowedExtensions: ['.xls', '.xlsx'],
+          dragoverClass: 'dragover',
+          errorMessages: {
+            wrongType: 'El archivo debe ser un Excel (.xls o .xlsx) de BROU',
+            empty: 'El archivo está vacío',
+            generic: 'No se pudo leer el archivo'
+          }
+        },
+        {
+          formId: 'form-itau',
+          inputId: 'file-itau',
+          errorId: 'error-itau',
+          allowedExtensions: ['.pdf'],
+          dragoverClass: 'dragover',
+          errorMessages: {
+            wrongType: 'El archivo debe ser un PDF de Itaú',
+            empty: 'El archivo está vacío',
+            generic: 'No se pudo leer el archivo'
+          }
+        }
+      ];
+
+      zones.forEach(zone => {
+        const form = document.getElementById(zone.formId);
+        const input = document.getElementById(zone.inputId);
+        const errorDiv = document.getElementById(zone.errorId);
+
+        // Prevenir comportamiento por defecto en todo el documento
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+          form.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+
+        // Feedback visual al arrastrar
+        ['dragenter', 'dragover'].forEach(eventName => {
+          form.addEventListener(eventName, () => {
+            form.classList.add(zone.dragoverClass);
+            hideError(errorDiv);
+          });
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+          form.addEventListener(eventName, () => {
+            form.classList.remove(zone.dragoverClass);
+          });
+        });
+
+        // Manejar el drop
+        form.addEventListener('drop', (e) => {
+          const files = e.dataTransfer.files;
+          if (files.length > 0) {
+            handleFile(files[0], zone, input, form, errorDiv);
+          }
+        });
+
+        // Manejar selección por input (botón)
+        input.addEventListener('change', () => {
+          if (input.files.length > 0) {
+            handleFile(input.files[0], zone, input, form, errorDiv);
+          }
+        });
+      });
+
+      function handleFile(file, zone, input, form, errorDiv) {
+        // Validar extensión
+        const fileName = file.name.toLowerCase();
+        const hasValidExtension = zone.allowedExtensions.some(ext => fileName.endsWith(ext));
+        
+        if (!hasValidExtension) {
+          showError(errorDiv, zone.errorMessages.wrongType);
+          return;
+        }
+
+        // Validar que no esté vacío
+        if (file.size === 0) {
+          showError(errorDiv, zone.errorMessages.empty);
+          return;
+        }
+
+        // Validar tamaño mínimo razonable (al menos 100 bytes)
+        if (file.size < 100) {
+          showError(errorDiv, 'El archivo parece estar corrupto o incompleto');
+          return;
+        }
+
+        // Todo OK - asignar archivo al input y enviar
+        hideError(errorDiv);
+        
+        // Crear DataTransfer para asignar el archivo al input
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        input.files = dataTransfer.files;
+
+        // Mostrar estado de procesamiento
+        form.classList.add('processing');
+        
+        // Enviar formulario
+        form.submit();
+      }
+
+      function showError(errorDiv, message) {
+        errorDiv.textContent = message;
+        errorDiv.classList.remove('hidden');
+        errorDiv.classList.add('error-message');
+        
+        // Quitar animación después de que termine
+        setTimeout(() => {
+          errorDiv.classList.remove('error-message');
+        }, 400);
+      }
+
+      function hideError(errorDiv) {
+        errorDiv.classList.add('hidden');
+        errorDiv.textContent = '';
+      }
+
+    });
+  </script>
+
+</body>
+</html>
