@@ -46,7 +46,7 @@ Cuotavista toma tu estado de cuenta y te muestra un resumen de tus cuotas activa
 
 ```bash
 # Clonar el repositorio
-git clone https://github.com/tu-usuario/cuotavista.git
+git clone https://github.com/absterben/cuotavista.git
 cd cuotavista
 
 # Crear entorno virtual (recomendado)
@@ -62,7 +62,7 @@ python app.py
 
 ## Estado del proyecto
 
-🚧 **Experimental**
+**Experimental**
 
 Este es un proyecto personal en desarrollo. Funciona, pero puede tener bugs. Si encontrás algún problema, podés reportarlo en los issues del repositorio.
 
