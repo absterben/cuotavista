@@ -53,9 +53,20 @@
 
             <div>
                 <h2 class="text-2xl font-bold mb-4" style="color: {{ brand_hex }};">Totales</h2>
-                <p class="text-lg font-semibold" style="color: {{ brand_hex }};">$ {{ "{:,.2f}".format(total_pesos) }}</p>
-                <p class="text-lg font-semibold" style="color: {{ brand_hex }};">U$S {{ "{:,.2f}".format(total_dolares) }}</p>
-                <p class="mt-2">Estás pagando un total de <b>${{ "{:,.2f}".format(total_cuotas_pesos) }}</b> en cuotas, lo que representa un <b>{{ porcentaje_cuotas_pesos }}%</b> de tu Estado de Cuenta.</p>
+                <div class="space-y-1">
+                    <p class="text-sm text-gray-600">Saldo anterior</p>
+                    <p class="text-lg font-semibold" style="color: {{ brand_hex }};">$ {{ "{:,.2f}".format(saldo_anterior|float) }}</p>
+                </div>
+                <div class="space-y-1 mt-3">
+                    <p class="text-sm text-gray-600">Gastos del período (neto de devoluciones)</p>
+                    <p class="text-lg font-semibold" style="color: {{ brand_hex }};">$ {{ "{:,.2f}".format(total_pesos) }}</p>
+                    <p class="text-lg font-semibold" style="color: {{ brand_hex }};">U$S {{ "{:,.2f}".format(total_dolares) }}</p>
+                </div>
+                <div class="space-y-1 mt-3">
+                    <p class="text-sm text-gray-600">Saldo anterior + gastos del período</p>
+                    <p class="text-lg font-semibold" style="color: {{ brand_hex }};">$ {{ "{:,.2f}".format(total_pesos_con_saldo_anterior|float) }}</p>
+                </div>
+                <p class="mt-4">Estás pagando un total de <b>${{ "{:,.2f}".format(total_cuotas_pesos) }}</b> en cuotas, lo que representa un <b>{{ porcentaje_cuotas_pesos }}%</b> de tu Estado de Cuenta.</p>
             </div>
         </section>
 

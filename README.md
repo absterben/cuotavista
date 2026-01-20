@@ -1,6 +1,6 @@
 # Cuotavista
 
-Herramienta web open source para analizar estados de cuenta de tarjetas de crédito uruguayas. Particularmente, ahora funciona con BROU (tarjeta BROU Recompensa) e Itaú (Volar)
+Herramienta web open source para analizar estados de cuenta de tarjetas de crédito uruguayas. Particularmente, ahora funciona con BROU (tarjeta BROU Recompensa), Itaú (Volar) y Santander.
 
 ## ¿Qué problema resuelve?
 
@@ -13,18 +13,43 @@ Cuotavista toma tu estado de cuenta y te muestra un resumen de tus cuotas activa
 
 ## Bancos soportados
 
-| Banco | Formato de archivo |
-|-------|-------------------|
-| BROU | Excel (.xls) |
-| Itaú | PDF |
+| Banco | Formato de archivo | Notas |
+|-------|-------------------|-------|
+| BROU | Excel (.xls) | - |
+| Itaú | PDF | - |
+| Santander | PDF (encriptado) | Requiere contraseña del PDF |
 
 ## Flujo de uso
 
 1. Descargá el estado de cuenta desde tu homebanking
 2. Entrá a Cuotavista y elegí tu banco
 3. Subí el archivo
-4. Revisá el resumen de cuotas
-5. (Opcional) Descargá el Excel con los detalles
+4. **Para Santander:** Ingresá la contraseña del PDF cuando se solicite
+5. Revisá el resumen de cuotas
+6. (Opcional) Descargá el Excel con los detalles
+
+## Santander - PDFs Encriptados
+
+Los estados de cuenta de Santander suelen venir encriptados con contraseña. Cuotavista maneja esto de forma segura:
+
+- **La contraseña NO se guarda**: solo se usa en memoria para desencriptar el archivo
+- **Procesamiento en memoria**: el archivo no se escribe a disco
+- **Sin logs de contraseña**: nunca se registra la contraseña en ningún lado
+
+### Probar Santander localmente
+
+1. Ejecutá la aplicación: `python app.py`
+2. Abrí `http://127.0.0.1:5000` en tu navegador
+3. En la tarjeta de Santander, hacé clic en "Subir archivo" o arrastrá un PDF
+4. Ingresá la contraseña del PDF (o dejala vacía si no está encriptado)
+5. Hacé clic en "Analizar"
+6. Serás redirigido a la página de resultados con:
+   - Gráfico de torta (gastos corrientes vs cuotas)
+   - Gráfico de barras (proyección de cuotas por mes)
+   - Tabla de movimientos
+   - Opción de descargar Excel
+
+**Nota:** Si el PDF no está encriptado, podés dejar la contraseña vacía y funcionará igual.
 
 ## Privacidad y manejo de datos
 

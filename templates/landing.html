@@ -71,6 +71,22 @@
       25% { transform: translateX(-5px); }
       75% { transform: translateX(5px); }
     }
+    /* Modal animations */
+    @keyframes fade-in {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .animate-fade-in {
+      animation: fade-in 0.2s ease-out forwards;
+    }
+    /* Spinner animation */
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-spin {
+      animation: spin 1s linear infinite;
+    }
   </style>
 </head>
 
@@ -104,7 +120,7 @@
       </p>
 
       <!-- Formularios -->
-      <div class="grid md:grid-cols-2 gap-6">
+      <div class="grid md:grid-cols-3 gap-6">
         
         <!-- BROU -->
         <form 
@@ -175,16 +191,116 @@
           <div id="error-itau" class="hidden mt-4 p-3 bg-state-error/10 border border-state-error/30 rounded-lg text-sm text-state-error"></div>
         </form>
 
+        <!-- Santander -->
+        <div 
+          id="zone-santander"
+          class="upload-zone bg-cream-light border border-cream-dark rounded-xl p-6 md:p-8 text-center">
+          
+          <div class="mb-5">
+            <h3 class="text-lg font-semibold text-text-primary">Santander</h3>
+            <p class="text-sm text-text-secondary mt-1">PDF del estado de cuenta</p>
+          </div>
+          
+          <input 
+            type="file" 
+            id="file-santander"
+            accept=".pdf"
+            class="hidden">
+          
+          <label 
+            for="file-santander" 
+            id="label-santander"
+            class="inline-flex items-center gap-2 bg-olive text-white px-6 py-3 rounded-lg font-medium hover:bg-olive-dark transition cursor-pointer">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+            </svg>
+            <span id="santander-btn-text">Subir archivo</span>
+          </label>
+
+          <!-- Estado de procesamiento -->
+          <p id="santander-status" class="hidden mt-4 text-sm text-text-secondary"></p>
+        </div>
+
       </div>
 
       <!-- Disclaimer -->
       <div class="mt-10 max-w-2xl mx-auto text-center">
         <p class="text-sm text-text-secondary leading-relaxed">
-          No guardamos tu información. El código es open-source y puede ser auditado.
+          No se guarda tu información. El código es open-source y puede ser auditado.
         </p>
       </div>
     </div>
   </section>
+
+  <!-- MODAL: Contraseña Santander -->
+  <div id="modal-password" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div class="bg-cream-light rounded-2xl shadow-xl p-8 w-full max-w-md mx-4 animate-fade-in">
+      <h3 class="text-xl font-semibold text-text-primary text-center mb-2">Contraseña del PDF</h3>
+      <p class="text-sm text-text-secondary text-center mb-6">El archivo está protegido.</p>
+      
+      <div class="relative mb-4">
+        <input 
+          type="password" 
+          id="modal-password-input"
+          placeholder="Contraseña"
+          class="w-full px-4 py-3 border border-cream-dark rounded-lg text-center focus:outline-none focus:ring-2 focus:ring-olive/50 focus:border-olive text-lg">
+        <button 
+          type="button"
+          id="modal-toggle-password"
+          class="absolute right-3 top-1/2 transform -translate-y-1/2 text-text-secondary hover:text-text-primary"
+          title="Mostrar/ocultar contraseña">
+          <svg id="modal-eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+        </button>
+      </div>
+
+      <p class="text-xs text-text-secondary text-center mb-6">
+        La contraseña no se guarda. Se usa solo en memoria para desencriptar el archivo.
+      </p>
+
+      <!-- Error dentro del modal -->
+      <div id="modal-password-error" class="hidden mb-4 p-3 bg-state-error/10 border border-state-error/30 rounded-lg text-sm text-state-error text-center"></div>
+
+      <div class="flex gap-3">
+        <button 
+          type="button"
+          id="modal-cancel-btn"
+          class="flex-1 px-4 py-3 border border-cream-dark rounded-lg text-text-secondary hover:bg-cream-dark/50 transition">
+          Cancelar
+        </button>
+        <button 
+          type="button"
+          id="modal-submit-btn"
+          class="flex-1 px-4 py-3 bg-olive text-white rounded-lg font-medium hover:bg-olive-dark transition flex items-center justify-center gap-2">
+          <span>Continuar</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Error genérico -->
+  <div id="modal-error" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div class="bg-cream-light rounded-2xl shadow-xl p-8 w-full max-w-md mx-4 animate-fade-in">
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 mx-auto mb-4 bg-state-error/10 rounded-full flex items-center justify-center">
+          <svg class="w-8 h-8 text-state-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-text-primary mb-2">No se pudo procesar</h3>
+        <p id="modal-error-message" class="text-sm text-text-secondary"></p>
+      </div>
+      
+      <button 
+        type="button"
+        id="modal-error-close"
+        class="w-full px-4 py-3 bg-olive text-white rounded-lg font-medium hover:bg-olive-dark transition">
+        Entendido
+      </button>
+    </div>
+  </div>
 
   <!-- Video explicativo (sección secundaria) -->
   <section class="bg-cream-base py-20 px-6 border-t border-cream-dark/20">
@@ -231,7 +347,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       
-      // Configuración de cada zona de carga
+      // Configuración de cada zona de carga (BROU e Itaú - formularios tradicionales)
       const zones = [
         {
           formId: 'form-brou',
@@ -356,6 +472,302 @@
         errorDiv.classList.add('hidden');
         errorDiv.textContent = '';
       }
+
+      // ========================================
+      // SANTANDER - Auto-análisis con temp_id
+      // ========================================
+      
+      const santanderZone = document.getElementById('zone-santander');
+      const santanderInput = document.getElementById('file-santander');
+      const santanderLabel = document.getElementById('label-santander');
+      const santanderBtnText = document.getElementById('santander-btn-text');
+      const santanderStatus = document.getElementById('santander-status');
+      
+      // Modal de contraseña
+      const modalPassword = document.getElementById('modal-password');
+      const modalPasswordInput = document.getElementById('modal-password-input');
+      const modalPasswordError = document.getElementById('modal-password-error');
+      const modalCancelBtn = document.getElementById('modal-cancel-btn');
+      const modalSubmitBtn = document.getElementById('modal-submit-btn');
+      const modalTogglePassword = document.getElementById('modal-toggle-password');
+      const modalEyeIcon = document.getElementById('modal-eye-icon');
+      
+      // Modal de error
+      const modalError = document.getElementById('modal-error');
+      const modalErrorMessage = document.getElementById('modal-error-message');
+      const modalErrorClose = document.getElementById('modal-error-close');
+
+      // Estado
+      let santanderFile = null;
+      let pendingTempId = null;
+      let isProcessing = false;
+
+      // Toggle password visibility
+      modalTogglePassword.addEventListener('click', () => {
+        const isPassword = modalPasswordInput.type === 'password';
+        modalPasswordInput.type = isPassword ? 'text' : 'password';
+        modalEyeIcon.innerHTML = isPassword 
+          ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />'
+          : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />';
+      });
+
+      // Drag & Drop para Santander
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        santanderZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }, false);
+      });
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        santanderZone.addEventListener(eventName, () => {
+          santanderZone.classList.add('dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        santanderZone.addEventListener(eventName, () => {
+          santanderZone.classList.remove('dragover');
+        });
+      });
+
+      santanderZone.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handleSantanderFile(files[0]);
+        }
+      });
+
+      santanderInput.addEventListener('change', () => {
+        if (santanderInput.files.length > 0) {
+          handleSantanderFile(santanderInput.files[0]);
+        }
+      });
+
+      function handleSantanderFile(file) {
+        const fileName = file.name.toLowerCase();
+        
+        if (!fileName.endsWith('.pdf')) {
+          showErrorModal('El archivo debe ser un PDF.');
+          return;
+        }
+
+        if (file.size === 0 || file.size < 100) {
+          showErrorModal('El archivo está vacío o corrupto.');
+          return;
+        }
+
+        // Guardar archivo y auto-enviar
+        santanderFile = file;
+        uploadSantander();
+      }
+
+      // Auto-upload al seleccionar archivo
+      async function uploadSantander() {
+        if (isProcessing || !santanderFile) return;
+        isProcessing = true;
+        
+        setLoadingState(true, 'Analizando...');
+
+        const formData = new FormData();
+        formData.append('archivo', santanderFile);
+
+        try {
+          const response = await fetch('/santander/upload', {
+            method: 'POST',
+            body: formData
+          });
+
+          const contentType = response.headers.get('content-type');
+          
+          if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            
+            if (data.needs_password) {
+              // Guardar temp_id y mostrar modal de contraseña
+              pendingTempId = data.temp_id;
+              showPasswordModal();
+            } else if (data.error_type === 'invalid_password') {
+              showPasswordModal(data.message);
+            } else {
+              showErrorModal(data.message || 'Error al procesar el archivo.');
+            }
+          } else {
+            // HTML -> éxito
+            const html = await response.text();
+            document.open();
+            document.write(html);
+            document.close();
+          }
+        } catch (error) {
+          showErrorModal('Error de conexión. Intentá de nuevo.');
+        } finally {
+          isProcessing = false;
+          setLoadingState(false);
+        }
+      }
+
+      // Enviar con contraseña
+      async function submitWithPassword(password) {
+        if (isProcessing || !pendingTempId) return;
+        isProcessing = true;
+        
+        setModalLoadingState(true);
+
+        const formData = new FormData();
+        formData.append('temp_id', pendingTempId);
+        formData.append('password', password);
+
+        try {
+          const response = await fetch('/santander/process-with-password', {
+            method: 'POST',
+            body: formData
+          });
+
+          const contentType = response.headers.get('content-type');
+          
+          if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            
+            if (data.error_type === 'invalid_password') {
+              // Mostrar error en el modal
+              modalPasswordError.textContent = data.message || 'Contraseña incorrecta.';
+              modalPasswordError.classList.remove('hidden');
+            } else if (data.error_type === 'expired') {
+              hidePasswordModal();
+              showErrorModal(data.message);
+              pendingTempId = null;
+            } else {
+              hidePasswordModal();
+              showErrorModal(data.message || 'Error al procesar.');
+            }
+          } else {
+            // HTML -> éxito
+            const html = await response.text();
+            document.open();
+            document.write(html);
+            document.close();
+          }
+        } catch (error) {
+          hidePasswordModal();
+          showErrorModal('Error de conexión.');
+        } finally {
+          isProcessing = false;
+          setModalLoadingState(false);
+        }
+      }
+
+      function setLoadingState(loading, text = '') {
+        if (loading) {
+          santanderZone.classList.add('processing');
+          santanderBtnText.textContent = text || 'Procesando...';
+          santanderLabel.classList.add('pointer-events-none', 'opacity-70');
+        } else {
+          santanderZone.classList.remove('processing');
+          santanderBtnText.textContent = 'Subir archivo';
+          santanderLabel.classList.remove('pointer-events-none', 'opacity-70');
+          santanderFile = null;
+          santanderInput.value = '';
+        }
+      }
+
+      function setModalLoadingState(loading) {
+        if (loading) {
+          modalSubmitBtn.disabled = true;
+          modalSubmitBtn.innerHTML = `
+            <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          `;
+        } else {
+          modalSubmitBtn.disabled = false;
+          modalSubmitBtn.innerHTML = '<span>Continuar</span>';
+        }
+      }
+
+      // Modal de contraseña
+      function showPasswordModal(errorMsg = null) {
+        modalPassword.classList.remove('hidden');
+        modalPassword.classList.add('flex');
+        modalPasswordInput.value = '';
+        modalPasswordInput.type = 'password';
+        modalPasswordInput.focus();
+        
+        if (errorMsg) {
+          modalPasswordError.textContent = errorMsg;
+          modalPasswordError.classList.remove('hidden');
+        } else {
+          modalPasswordError.classList.add('hidden');
+        }
+      }
+
+      function hidePasswordModal() {
+        modalPassword.classList.add('hidden');
+        modalPassword.classList.remove('flex');
+        modalPasswordError.classList.add('hidden');
+        setLoadingState(false);
+      }
+
+      modalCancelBtn.addEventListener('click', () => {
+        hidePasswordModal();
+        pendingTempId = null;
+      });
+      
+      modalPassword.addEventListener('click', (e) => {
+        if (e.target === modalPassword) {
+          hidePasswordModal();
+          pendingTempId = null;
+        }
+      });
+
+      modalSubmitBtn.addEventListener('click', () => {
+        const password = modalPasswordInput.value;
+        if (!password.trim()) {
+          modalPasswordError.textContent = 'Ingresá la contraseña.';
+          modalPasswordError.classList.remove('hidden');
+          return;
+        }
+        modalPasswordError.classList.add('hidden');
+        submitWithPassword(password);
+      });
+
+      modalPasswordInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          modalSubmitBtn.click();
+        }
+      });
+
+      // Modal de error
+      function showErrorModal(message) {
+        modalErrorMessage.textContent = message;
+        modalError.classList.remove('hidden');
+        modalError.classList.add('flex');
+        setLoadingState(false);
+      }
+
+      function hideErrorModal() {
+        modalError.classList.add('hidden');
+        modalError.classList.remove('flex');
+      }
+
+      modalErrorClose.addEventListener('click', hideErrorModal);
+      
+      modalError.addEventListener('click', (e) => {
+        if (e.target === modalError) hideErrorModal();
+      });
+
+      // ESC para cerrar modales
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          if (!modalPassword.classList.contains('hidden')) {
+            hidePasswordModal();
+            pendingTempId = null;
+          }
+          hideErrorModal();
+        }
+      });
 
     });
   </script>
