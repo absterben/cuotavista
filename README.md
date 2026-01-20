@@ -33,7 +33,6 @@ Cuotavista toma tu estado de cuenta y te muestra un resumen de tus cuotas activa
 Los estados de cuenta de Santander suelen venir encriptados con contraseña. Cuotavista maneja esto de forma segura:
 
 - **La contraseña NO se guarda**: solo se usa en memoria para desencriptar el archivo
-- **Procesamiento en memoria**: el archivo no se escribe a disco
 - **Sin logs de contraseña**: nunca se registra la contraseña en ningún lado
 
 ### Probar Santander localmente
