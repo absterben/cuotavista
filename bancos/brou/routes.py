@@ -22,7 +22,14 @@ def pagina_resultado():
         nombre_archivo = file.filename
         
         # Depura el archivo cargado
-        df = depurar_archivo(file)
+        result = depurar_archivo(file)
+        # El parser puede retornar df o (None, error_msg)
+        if isinstance(result, tuple):
+            df, error_msg = result
+            if df is None:
+                raise ValueError(f"El archivo no se pudo procesar: {error_msg}")
+        else:
+            df = result
         if df is None:
             raise ValueError("El archivo no se pudo procesar correctamente.")
 
@@ -98,6 +105,12 @@ def pagina_resultado():
         elif len(montos_cuotas_restantes_list) == 1:
             montos_cuotas_restantes_list.append(montos_cuotas_restantes_list[0])
 
+        # Guardia: evitar zero division en porcentaje
+        if total_pesos > 0:
+            porcentaje_cuotas_pesos = round(total_cuotas_pesos / total_pesos * 100, 2)
+        else:
+            porcentaje_cuotas_pesos = 0
+        
         contexto = {
             "tabla": data_html,
             "total_pesos": total_pesos,
@@ -106,7 +119,7 @@ def pagina_resultado():
             "total_cuotas_dolares": total_cuotas_dolares,
             "total_corrientes_pesos": total_pesos - total_cuotas_pesos,
             "total_corrientes_dolares": total_dolares - total_cuotas_dolares,
-            "porcentaje_cuotas_pesos": round(total_cuotas_pesos / total_pesos * 100, 2),
+            "porcentaje_cuotas_pesos": porcentaje_cuotas_pesos,
             "df_cuotas_restantes": df_cuotas_restantes_html,
             "cuotas_restantes": cuotas_restantes_list,
             "montos_cuotas_restantes": montos_cuotas_restantes_list,
@@ -119,6 +132,10 @@ def pagina_resultado():
             "nombre_banco": "BROU",
             "banco_color": "blue",
         }
+
+        # Mínimo cambio: asegurar saldo_anterior en el contexto (default 0)
+        contexto.setdefault("saldo_anterior", 0)
+        contexto.setdefault("total_pesos_con_saldo_anterior", contexto["total_pesos"] + contexto["saldo_anterior"])
 
         return render_template("resultado.html", **contexto)
     except ValueError as e:

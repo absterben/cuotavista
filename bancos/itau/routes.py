@@ -126,4 +126,9 @@ def procesar_pdf_itau():
         "banco_color": "orange",
     }
 
+    # Mínimo cambio: asegurar saldo_anterior en el contexto (default 0)
+    contexto.setdefault("saldo_anterior", 0)
+    # Derivado para el template: saldo anterior + gastos del período
+    contexto.setdefault("total_pesos_con_saldo_anterior", contexto["total_pesos"] + contexto["saldo_anterior"])
+
     return render_template("resultado.html", **contexto)
